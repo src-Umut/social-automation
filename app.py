@@ -6,7 +6,7 @@ app = Flask(__name__)
 
 def get_db_connection():
     conn = sqlite3.connect(DB_PATH)
-    conn.row_factory = sqlite3.row
+    conn.row_factory = sqlite3.Row
     return conn 
 
 def init_db():
@@ -35,7 +35,7 @@ def new_post():
     if request.method == "POST":
         title = request.form["title"]
         content =  request.form["content"]
-        conn = get_db_connection
+        conn = get_db_connection()
         conn.execute("INSERT INTO posts (title, content) VALUES (?, ?)", (title, content))
         conn.commit()
         conn.close()
