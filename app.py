@@ -25,22 +25,35 @@ init_db()
 
 @app.route("/")
 def home():
-    return render_template("index.html")
+    conn = get_db_connection()
+    posts = conn.execute("SELECT * FROM posts ORDER BY id DESC").fetchall()
+    conn.close()
+    return render_template("index.html", posts = posts)
 @app.route("/about")
 def about():
     return "<h2>About Page</h2>"
 
 @app.route("/new" , methods = ["GET" , "POST"])
 def new_post():
+
+    error = None
     if request.method == "POST":
         title = request.form["title"]
         content =  request.form["content"]
-        conn = get_db_connection()
-        conn.execute("INSERT INTO posts (title, content) VALUES (?, ?)", (title, content))
-        conn.commit()
-        conn.close()
-        return redirect(url_for("home"))
-    return render_template("new_post.html")
+
+        if not title or not content:
+            error = "Title and Content are required!"
+        else: 
+            try:
+                conn = get_db_connection()
+                conn.execute("INSERT INTO posts (title , content) VALUES (? , ? )" , (title , content))
+                conn.commit()
+                conn.close()
+                return redirect(url_for("home"))
+            except Exception as e:
+                error = f"database error {e}"
+                
+    return render_template("new_post.html" , error = error)
 
 
 

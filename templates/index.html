@@ -8,5 +8,18 @@
 <body>
     <h1>Welcome to social Automation MVP</h1>
     <p>This is the starting page for the project</p>
+
+    <h1>All Posts</h1>
+    <a href="{{url_for('new_post')}}">Create new post</a>
+    <hr>
+    {% for post in posts %}
+        <div>
+            <h2>{{post.title}}</h2>
+            <p>{{post.content}}</p>
+        </div>
+        <hr>
+    {%else%}
+        <p>no posts yet</p>
+    {%endfor%}
 </body>
 </html>
